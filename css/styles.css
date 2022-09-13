@@ -397,3 +397,7 @@ footer {
     opacity: 0;
   }
 }
+.todos{
+  max-height:300px;
+  overflow: auto;
+}

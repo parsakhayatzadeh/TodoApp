@@ -1,6 +1,6 @@
 const themeSwitcher = document.getElementById("theme-switcher");
 const bodyTag = document.querySelector("body");
-const addBtb = document.getElementById("add-btn");
+const addBtn = document.getElementById("add-btn");
 const addInput = document.getElementById("addt");
 const ul = document.querySelector(".todos")
 
@@ -43,15 +43,15 @@ function main() {
             }
 
             const todos = JSON.parse(localStorage.getItem("todos"));
-            const remove =todos.splice(currentDragCard , 1);
-            todos.splice(dragOverCard , 0 , remove[0]);
-            localStorage.setItem("todos" , JSON.stringify(todos));
+            const remove = todos.splice(currentDragCard, 1);
+            todos.splice(dragOverCard, 0, remove[0]);
+            localStorage.setItem("todos", JSON.stringify(todos));
         }
     })
 
 
     //set localStorage
-    addBtb.addEventListener("click", () => {
+    addBtn.addEventListener("click", () => {
 
         const item = addInput.value.trim();
         if (item) {
@@ -75,13 +75,36 @@ function main() {
         }
     })
 
+    addInput.addEventListener("keydown", (e) => {
+        if (e.key == "Enter") {
+            addBtn.click()
+
+        }
+    });
+
+    function removeTodo(index) {
+
+        const todos = JSON.parse(localStorage.getItem("todos"));
+        todos.splice(index, 1)
+        localStorage.setItem("todos", JSON.stringify(todos))
+
+
+    }
+
+    function stateTodo(index, isComplete) {
+
+        const todos = JSON.parse(localStorage.getItem("todos"));
+        todos[index].isCompleted = isComplete;
+        localStorage.setItem("todos", JSON.stringify(todos))
+
+    }
 
     //set  Element 
     if (localStorage.getItem("todos")) {
         setElement(JSON.parse(localStorage.getItem("todos")))
 
     }
-    
+
 
     function setElement(TodoItem) {
 
@@ -115,6 +138,12 @@ function main() {
             img.setAttribute("alt", "Clear it");
             p.textContent = TodoObject.item;
 
+            if(TodoObject.isCompleted){
+                li.classList.add("checked");
+                input.setAttribute("checked" , "checked")
+
+            }
+
 
             //set element with parent child
             li.append(div);
@@ -130,12 +159,41 @@ function main() {
 
             li.addEventListener("dragstart", () => {
                 li.classList.add("dragging")
-            })
+            });
             li.addEventListener("dragend", () => {
                 li.classList.remove("dragging")
+            });
+
+            button.addEventListener("click", (e) => {
+                const removeCard = button.parentElement;
+                removeCard.classList.add("fall");
+                const indexOfRemoveCard = [...document.querySelectorAll(".todos .card")].indexOf(removeCard);
+                console.log(indexOfRemoveCard);
+                removeTodo(indexOfRemoveCard);
+                li.addEventListener("animationend" , () => { 
+                    
+                    setTimeout(() => {
+
+                        removeCard.remove()
+                        
+                    }, 100);
+                })
+            });
+
+            input.addEventListener("click", (e) => {
+
+                const checkItem = input.parentElement.parentElement;
+                const indexOfCheckItem = [...document.querySelectorAll(".todos .card")].indexOf(checkItem);
+                const checked = input.checked;
+                stateTodo(indexOfCheckItem , checked);
+
+                checked ? checkItem.classList.add("checked") : checkItem.classList.remove("checked")
+               
+
             })
         });
     }
+
 
 }
 
