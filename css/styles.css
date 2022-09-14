@@ -185,7 +185,7 @@ header.card h1 {
 }
 
 .add .cb-container:active {
-  transform: scale(0.95);
+  transform: scale(0.1);
 }
 
 .add .cb-container:hover #add-btn {
