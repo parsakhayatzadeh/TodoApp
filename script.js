@@ -111,6 +111,7 @@ function main() {
         if (!TodoItem) {
             return null;
         }
+        const timeLeft = document.getElementById("times-left")
         TodoItem.forEach(TodoObject => {
 
             //set HTML Element 
