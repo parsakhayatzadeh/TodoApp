@@ -1,96 +1,38 @@
-const themeSwitcher = document.getElementById("theme-switcher");
+const themeSwitcherBtn = document.getElementById("theme-switcher");
 const bodyTag = document.querySelector("body");
-const addBtn = document.getElementById("add-btn");
-const addInput = document.getElementById("addt");
-const ul = document.querySelector(".todos")
-
-
+const addBTN = document.getElementById("add-btn");
+const addiInput = document.getElementById("addt");
+const ul = document.querySelector(".todos");
 
 
 function main() {
 
-    //theme-switcher
-    themeSwitcher.addEventListener("click", () => {
+    //theme-switcher 
+    themeSwitcherBtn.addEventListener("click", () => {
         bodyTag.classList.toggle("light");
-        const themIcon = themeSwitcher.children[0];
-
+        const themIcon = themeSwitcherBtn.children[0];
         themIcon.setAttribute("src",
-
             themIcon.getAttribute("src") === "./assets/images/icon-sun.svg" ?
             "./assets/images/icon-moon.svg" :
             "./assets/images/icon-sun.svg"
 
-
         )
     })
 
-
-    //dragOver card
-    ul.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        if (e.target.classList.contains("card") && !e.target.classList.contains("dragging")) {
-
-            const draggingCard = document.querySelector(".dragging");
-            const cards = [...ul.querySelectorAll(".card")];
-            const currentDragCard = cards.indexOf(draggingCard);
-            const dragOverCard = cards.indexOf(e.target);
-            console.log(currentDragCard, dragOverCard);
-
-            if (currentDragCard > dragOverCard) {
-                ul.insertBefore(draggingCard, e.target)
-            } else {
-                ul.insertBefore(draggingCard, e.target.nextSibling)
-            }
-
-            const todos = JSON.parse(localStorage.getItem("todos"));
-            const remove = todos.splice(currentDragCard, 1);
-            todos.splice(dragOverCard, 0, remove[0]);
-            localStorage.setItem("todos", JSON.stringify(todos));
-        }
-    })
-
-
-    //set localStorage
-    addBtn.addEventListener("click", () => {
-
-        const item = addInput.value.trim();
-        if (item) {
-            addInput.value = "";
-
-            const todos = !localStorage.getItem("todos") ? [] :
-                JSON.parse(localStorage.getItem("todos"));
-
-
-            const localItem = {
-                item: item,
-                isCompleted: false
-            }
-
-            todos.push(localItem);
-
-            localStorage.setItem("todos", JSON.stringify(todos));
-            setElement([localItem])
-
-
-        }
-    })
-
-    addInput.addEventListener("keydown", (e) => {
-        if (e.key == "Enter") {
-            addBtn.click()
-
-        }
-    });
-
-    function removeTodo(index) {
-
-        const todos = JSON.parse(localStorage.getItem("todos"));
-        todos.splice(index, 1)
-        localStorage.setItem("todos", JSON.stringify(todos))
-
+    if (localStorage.getItem("todos")) {
+        setElement(JSON.parse(localStorage.getItem("todos")))
 
     }
 
+    //clear item 
+    function removeTodo(index) {
+        const todos = JSON.parse(localStorage.getItem("todos"));
+        todos.splice(index, 1);
+        localStorage.setItem("todos", JSON.stringify(todos))
+
+    }
+
+    //COmplete item 
     function stateTodo(index, isComplete) {
 
         const todos = JSON.parse(localStorage.getItem("todos"));
@@ -99,103 +41,190 @@ function main() {
 
     }
 
-    //set  Element 
-    if (localStorage.getItem("todos")) {
-        setElement(JSON.parse(localStorage.getItem("todos")))
+    //dragging card 
+    ul.addEventListener("dragover", (e) => {
 
-    }
+        e.preventDefault();
 
+        if (e.target.classList.contains("card") &&
+            !e.target.classList.contains("dragging")) {
+            const draggingCard = document.querySelector(".dragging");
+            const cards = [...ul.querySelectorAll(".card")];
+            const dragSelectCard = cards.indexOf(draggingCard);
+            const dragOverCard = cards.indexOf(e.target);
+            if (dragSelectCard > dragOverCard) {
 
-    function setElement(TodoItem) {
+                ul.insertBefore(draggingCard, e.target)
 
-        if (!TodoItem) {
-            return null;
+            } else {
+
+                ul.insertBefore(draggingCard, e.target.nextSibling)
+            }
+
+            //set dragging mood for localstorage
+            const todos = JSON.parse(localStorage.getItem("todos"));
+            const remove = todos.splice(dragSelectCard, 1);
+            todos.splice(dragOverCard, 0, remove[0]);
+            localStorage.setItem("todos", JSON.stringify(todos))
+
         }
-        const timeLeft = document.getElementById("times-left")
-        TodoItem.forEach(TodoObject => {
 
-            //set HTML Element 
-            const li = document.createElement("li");
-            const div = document.createElement("div");
-            const input = document.createElement("input");
-            const span = document.createElement("span");
-            const p = document.createElement("p");
-            const button = document.createElement('button');
+    })
+
+
+    // click enter to add Item 
+    addiInput.addEventListener("keydown", (e) => {
+
+        if (e.key === "Enter") {
+            addBTN.click()
+
+        }
+    })
+    // set localStorage
+    addBTN.addEventListener("click", () => {
+
+        const item = addiInput.value.trim();
+        if (item) {
+
+            addiInput.value = '';
+
+            const todos = localStorage.getItem("todos") ?
+                JSON.parse(localStorage.getItem("todos")) : []
+
+            const localItem = {
+                item: item,
+                isCompleted: false
+            };
+
+            todos.push(localItem);
+            localStorage.setItem("todos", JSON.stringify(todos));
+
+            setElement([localItem])
+
+        }
+
+
+    })
+
+    //set HTML Element 
+
+    function setElement(todoArray) {
+
+        if (!todoArray) {
+            return null
+        };
+        const itemLeft = document.getElementById("items-left")
+        todoArray.forEach(todoObject => {
+
+            //creat element 
+            const card = document.createElement("li");
+            const cbContainer = document.createElement("div");
+            const cbInput = document.createElement("input");
+            const checkSpan = document.createElement("span");
+            const item = document.createElement("p");
+            const clearBtn = document.createElement("button");
             const img = document.createElement("img");
 
-            // add classes
-            li.classList.add("card");
-            div.classList.add("cb-container");
-            input.classList.add("cb-input");
-            span.classList.add("check");
-            p.classList.add("item");
-            button.classList.add("clear");
+            // add  classes 
+            card.classList.add("card");
+            cbContainer.classList.add("cb-container");
+            cbInput.classList.add("cb-input");
+            checkSpan.classList.add("check");
+            item.classList.add("item");
+            clearBtn.classList.add("clear");
 
-
-            // add Attribute
-            li.setAttribute("draggable", true);
-            input.setAttribute("type", "checkbox");
-            img.setAttribute("src", "./assets/images/icon-cross.svg");
+            // add attribute
+            card.setAttribute("draggable", "true");
+            cbInput.setAttribute("type", "checkbox");
+            img.setAttribute("src", "./assets/images/icon-cross.svg")
             img.setAttribute("alt", "Clear it");
-            p.textContent = TodoObject.item;
+            item.textContent = todoObject.item
 
-            if(TodoObject.isCompleted){
-                li.classList.add("checked");
-                input.setAttribute("checked" , "checked")
+            if (todoObject.isCompleted) {
+                card.classList.add("checked");
+                cbInput.setAttribute("checked", "checked")
 
             }
 
-
             //set element with parent child
-            li.append(div);
-            li.append(p);
-            li.append(button);
-            div.append(input);
-            div.append(span);
-            button.append(img);
 
-            ul.append(li);
+            card.append(cbContainer);
+            card.append(item);
+            card.append(clearBtn);
+            cbContainer.append(cbInput);
+            cbContainer.append(checkSpan);
+            clearBtn.append(img);
 
-            //add Event
+            //add EventListener
+            card.addEventListener("dragstart", () => {
+                card.classList.add("dragging")
+            })
 
-            li.addEventListener("dragstart", () => {
-                li.classList.add("dragging")
-            });
-            li.addEventListener("dragend", () => {
-                li.classList.remove("dragging")
-            });
+            card.addEventListener("dragend", () => {
+                card.classList.remove("dragging")
+            })
 
-            button.addEventListener("click", (e) => {
-                const removeCard = button.parentElement;
-                removeCard.classList.add("fall");
-                const indexOfRemoveCard = [...document.querySelectorAll(".todos .card")].indexOf(removeCard);
-                console.log(indexOfRemoveCard);
-                removeTodo(indexOfRemoveCard);
-                li.addEventListener("animationend" , () => { 
-                    
+            clearBtn.addEventListener("click", (e) => {
+                const removeItem = clearBtn.parentElement;
+                const indexOfRemoveItem = [...ul.querySelectorAll(".todos .card")].indexOf(removeItem);
+                removeTodo(indexOfRemoveItem);
+                removeItem.classList.add("fall");
+
+                removeItem.addEventListener("animationend", () => {
                     setTimeout(() => {
+                        removeItem.remove()
+                        itemLeft.textContent =
+                            document.querySelectorAll(".todos .card:not(.checked)").length
 
-                        removeCard.remove()
-                        
+
                     }, 100);
                 })
-            });
 
-            input.addEventListener("click", (e) => {
 
-                const checkItem = input.parentElement.parentElement;
-                const indexOfCheckItem = [...document.querySelectorAll(".todos .card")].indexOf(checkItem);
-                const checked = input.checked;
-                stateTodo(indexOfCheckItem , checked);
 
-                checked ? checkItem.classList.add("checked") : checkItem.classList.remove("checked")
-               
 
             })
+
+            cbInput.addEventListener("click", (e) => {
+
+                const checkSelectItem = cbInput.parentElement.parentElement;
+                const checked = cbInput.checked;
+                const indexOfCheckSelectItem = [...document.querySelectorAll(".todos .card")].indexOf(checkSelectItem)
+                console.log(indexOfCheckSelectItem);
+                stateTodo(indexOfCheckSelectItem, checked);
+
+                checked ? card.classList.add("checked") : card.classList.remove("checked");
+                itemLeft.textContent = document.querySelectorAll(".todos .card:not(.checked)").length
+
+
+
+
+
+            })
+
+
+
+            document.querySelector('.todos').append(card)
+
         });
+
+        itemLeft.textContent = document.querySelectorAll(".todos .card:not(.checked)").length
+
+
+
     }
 
 
-}
 
+
+
+
+
+
+
+
+
+
+
+}
 main()
