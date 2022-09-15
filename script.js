@@ -3,6 +3,9 @@ const bodyTag = document.querySelector("body");
 const addBTN = document.getElementById("add-btn");
 const addiInput = document.getElementById("addt");
 const ul = document.querySelector(".todos");
+const filter = document.querySelector(".filter");
+const clearCompletedBtn = document.getElementById("clear-completed")
+
 
 
 
@@ -25,19 +28,6 @@ function main() {
         setElement(JSON.parse(localStorage.getItem("todos")))
 
     }
-
-
-
-
-    //active item 
-    filter.addEventListener("click", (e) => {
-        var id = e.target.id;
-        document.querySelector(".on").classList.remove("on");
-        document.getElementById(id).classList.add("on");
-        document.querySelector(".todos").className = `todos ${id}`
-
-    })
-
 
 
     //dragging card 
@@ -79,6 +69,8 @@ function main() {
 
         }
     })
+
+
     // set localStorage
     addBTN.addEventListener("click", () => {
 
@@ -104,6 +96,30 @@ function main() {
 
 
     })
+
+
+    //active item 
+    filter.addEventListener("click", (e) => {
+        var id = e.target.id;
+        document.querySelector(".on").classList.remove("on");
+        document.getElementById(id).classList.add("on");
+        document.querySelector(".todos").className = `todos ${id}`
+
+    });
+
+    //clear completed item 
+    clearCompletedBtn.addEventListener("click", () => {
+
+        var removeItem = [];
+        document.querySelectorAll("card.checked").forEach((card) => { 
+            removeItem.push(
+                [...document.querySelectorAll(".todos .card") ].indexOf(card)
+            )
+        })
+        console.log(removeItem);
+    
+    })
+
 
 
 
@@ -191,10 +207,10 @@ function setElement(todoArray) {
                 }, 100);
             })
 
-
-
-
         })
+
+
+
 
         cbInput.addEventListener("click", (e) => {
 
@@ -223,7 +239,7 @@ function setElement(todoArray) {
 
 
 
-}
+};
 
 //clear item 
 function removeTodo(index) {
@@ -231,7 +247,15 @@ function removeTodo(index) {
     todos.splice(index, 1);
     localStorage.setItem("todos", JSON.stringify(todos))
 
-}
+};
+
+function removeCompletedItem(indexes) {
+    
+
+};
+
+
+
 
 
 main()
