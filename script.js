@@ -111,13 +111,20 @@ function main() {
     clearCompletedBtn.addEventListener("click", () => {
 
         var removeItem = [];
-        document.querySelectorAll("card.checked").forEach((card) => { 
+        document.querySelectorAll(".card.checked").forEach((card) => {
             removeItem.push(
-                [...document.querySelectorAll(".todos .card") ].indexOf(card)
+                [...document.querySelectorAll(".todos .card")].indexOf(card)
             )
-        })
-        console.log(removeItem);
-    
+            card.classList.add("fall")
+            card.addEventListener("animationend" , () => { 
+                card.remove()
+            });
+            
+
+
+        });
+        removeCompletedItem(removeItem)
+
     })
 
 
@@ -250,7 +257,12 @@ function removeTodo(index) {
 };
 
 function removeCompletedItem(indexes) {
-    
+    var todos = JSON.parse(localStorage.getItem("todos"));
+    todos =  todos.filter((todo, index) => {
+        return !indexes.includes(index)
+    })
+    localStorage.setItem("todos" , JSON.stringify(todos));
+
 
 };
 
